@@ -171,7 +171,14 @@ class CmdInterface():
             self.__write_string(self.charbuffer[pos:])
             newpos = 0
         elif key[-1] == 'S':
-            pass
+            if pos != 0:
+                self.charbuffer.pop(pos)
+                newpos = pos + 1
+                if newpos == 0:
+                    self.__write_string(' ')
+                else:
+                    self.__write_string(''.join(self.charbuffer[newpos:])+' ')
+                self.__write_string('\b'*(abs(newpos)+1))
         return newpos
 
 
