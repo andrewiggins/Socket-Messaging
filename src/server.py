@@ -54,7 +54,6 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
 #          self.wfile.close()
 #          self.rfile.close()
 
-
     def setup(self):
         SocketServer.StreamRequestHandler.setup(self)
 
@@ -62,23 +61,22 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
         connections[self.nickname]=self
         print self.nickname, 'connected.'
 
-
     def handle(self):
         line = ''
-        while line not in (':exit',':quit', ':q'):
+        while line not in ('/exit','/quit', '/q'):
             peer = self.connection.getpeername()[0]
             line = self.rfile.readline().strip()
             if not line:
                 continue
             print peer,'('+self.nickname+')', 'wrote:', line
 
-            if line in (':exit',':quit', ':q'):
+            if line in ('/exit','/quit', '/q'):
                 connections.pop(self.nickname)
                 message='%s exited.' %self.nickname
                 print message
                 self.sendall('**SERVER** '+message)
                 break
-            elif line[:2] == ':n':
+            elif line[:2] == '/n' or line[:5] == '/nick':
                 newnickname=line[2:].strip()
                 oldnickname=self.nickname
                 if connections.has_key(newnickname):
@@ -97,14 +95,13 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
                     message='**SERVER** "%s" is now known as "%s"' %(oldnickname, newnickname)
                     self.sendall(message)
                     continue
-            elif line in (':r', ':room'):
+            elif line in ('/r', '/room'):
                 room=self.Room()
                 print 'Sending room to %s:\n\t%s' %(self.nickname, room)
                 self.wfile.write('**SERVER** '+room+'\n')
                 continue
 
             self.sendall(line)
-
 
     def sendall(self, data):
         for nickname in connections:
@@ -113,13 +110,11 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
             message = self.nickname+': '+data+'\n' if '**SERVER**' not in data else data+'\n'
             connections[nickname].wfile.write(message)
 
-
     def Room(self):
         room='Room: '
         for nickname in connections:
             room += nickname+', '
         return room
-
 
 if __name__ == '__main__':
     # Port 0 means to select an arbitrary unused port

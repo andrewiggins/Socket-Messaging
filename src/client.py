@@ -50,28 +50,32 @@ class ClientSocket():
 
         self.prompt_on = False
         self.address = address
-
-
-    def serve_forever(self):
+        
+        
+    def connect(self):
         self.connection=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection.connect(self.address)
         self.rfile = self.connection.makefile('rb', self.rbufsize)
         self.wfile = self.connection.makefile('wb', self.wbufsize)
+        
+        self.wfile.write('/nick ' + self.nickname + '\n')
 
-        self.wfile.write(':n' + self.nickname + '\n' + ':room\n')
 
+    def serve_forever(self):
+        self.connect()
+        
         thread.start_new_thread(self.acceptinput,())
 
         line = ""
-        while line not in (':exit',':quit', ':q'):
+        while line not in ('/exit','/quit', '/q'):
             self.prompt_on=True
             line = raw_input(self.prompt)
             self.prompt_on=False
-            if line[:2] == ':n':
+            if line[:2] == '/n' or line[:5] == '/nick':
                 self.changeNick(line[2:].strip())
             self.wfile.write(line + '\n')
 
-        self.finish()
+        self.close()
         self.connection.shutdown(socket.SHUT_RDWR)
         self.connection.close()
 
@@ -100,7 +104,7 @@ class ClientSocket():
             print data
 
 
-    def finish(self):
+    def close(self):
         if not self.wfile.closed:
             self.wfile.flush()
         self.wfile.close()
