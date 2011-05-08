@@ -40,8 +40,9 @@ class CmdInterface():
     functionprefix = '\x00'
     specialprefixes = [controlprefix, functionprefix]
 
-    def __init__(self, prompt='>>> '):
+    def __init__(self, prompt='>>> ', prefix='you wrote: '):
         self.prompt = prompt
+        self.prefix = prefix
         self.charbuffer = []
         self.screen_lock = thread.allocate_lock()
         self.curpos = 0 # means cursor is at the end of the string, so after the last char.
@@ -67,9 +68,17 @@ class CmdInterface():
             self.screen_lock.release()
 
     def __write_string(self, s):
-        #TODO currently overwrites, do we want insert instead?
         for char in s:
             msvcrt.putch(char)
+
+    def insert_char(self, c, pos):
+        if pos == 0:
+            self.charbuffer.append(c)
+            self.__write_string(c)
+        else:
+            self.charbuffer.insert(pos, c)
+            self.__write_string(self.charbuffer[pos-1:])
+            self.__write_string('\b'*abs(pos))
 
     def backspace(self, pos):
         if pos == 0:
@@ -121,15 +130,12 @@ class CmdInterface():
             if (pos == 0 and len(self.charbuffer) > 0) or (pos < 0):
                 newpos = self.backspace(pos)
         elif key == '\r':
+            self.__write_string('\r')
+            self.__write_string(self.prefix + ''.join(self.charbuffer))
             self.__write_string(CmdInterface.newline)
             raise EndOfLine()
         else:
-            self.__write_string(key)
-            if pos < 0:
-                self.charbuffer[pos] = key
-                newpos = pos + 1
-            else:
-                self.charbuffer.append(key)
+            self.insert_char(key, pos)
         return newpos
 
     def handle_control_key(self, key, pos):
@@ -154,16 +160,18 @@ class CmdInterface():
             if abs(pos - 1) <= len(self.charbuffer):
                 newpos = pos - 1
                 self.__write_string('\b')
-        elif key[-1] == 'M': #Right
+        elif key[-1] == 'M': #right
             if pos != 0:
                 self.__write_string(self.charbuffer[pos])
                 newpos += 1
-        elif key[-1] == 'G': #Home
+        elif key[-1] == 'G': #home
             self.__write_string('\r' + self.prompt)
             newpos = -len(self.charbuffer)
-        elif key[-1] == 'O': #End
+        elif key[-1] == 'O': #end
             self.__write_string(self.charbuffer[pos:])
             newpos = 0
+        elif key[-1] == 'S':
+            pass
         return newpos
 
 
@@ -174,7 +182,7 @@ def threaded_output(screen):
 
 
 def main():
-    screen = CmdInterface('me: ')
+    screen = CmdInterface(prefix='me: ')
 
     thread.start_new_thread(threaded_output, (screen,))
 
