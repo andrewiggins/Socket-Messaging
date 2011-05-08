@@ -151,7 +151,7 @@ class CmdInterface():
         I = Page Up
         Q = Page Down
 
-        S = Delete #TODO
+        S = Delete
         R = Insert #TODO
         '''
 
@@ -170,7 +170,7 @@ class CmdInterface():
         elif key[-1] == 'O': #end
             self.__write_string(self.charbuffer[pos:])
             newpos = 0
-        elif key[-1] == 'S':
+        elif key[-1] == 'S': #delete
             if pos != 0:
                 self.charbuffer.pop(pos)
                 newpos = pos + 1
