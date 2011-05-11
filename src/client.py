@@ -68,9 +68,9 @@ class ClientSocket():
 
         line = ""
         while line not in ('/exit','/quit', '/q'):
-            self.prompt_on=True
+            self.prompt_on = True
             line = raw_input(self.prompt)
-            self.prompt_on=False
+            self.prompt_on = False
             if line[:2] == '/n' or line[:5] == '/nick':
                 self.changeNick(line[2:].strip())
             self.wfile.write(line + '\n')
@@ -118,7 +118,7 @@ def main():
     serverPort = input('Server Port:')
     address = (serverHost, serverPort)
 
-    client=ClientSocket(address)
+    client = ClientSocket(address)
     print 'Connecting to server on %s:%s' % (serverHost, serverPort)
     client.serve_forever()
 

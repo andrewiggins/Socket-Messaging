@@ -57,8 +57,8 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
     def setup(self):
         SocketServer.StreamRequestHandler.setup(self)
 
-        self.nickname=self.connection.getpeername()[0]
-        connections[self.nickname]=self
+        self.nickname = self.connection.getpeername()[0]
+        connections[self.nickname] = self
         print self.nickname, 'connected.'
 
     def handle(self):
@@ -72,23 +72,23 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
 
             if line in ('/exit','/quit', '/q'):
                 connections.pop(self.nickname)
-                message='%s exited.' %self.nickname
+                message = '%s exited.' %self.nickname
                 print message
                 self.sendall('**SERVER** '+message)
                 break
             elif line[:2] == '/n' or line[:5] == '/nick':
-                newnickname=line[2:].strip()
-                oldnickname=self.nickname
+                newnickname = line[2:].strip()
+                oldnickname = self.nickname
                 if connections.has_key(newnickname):
-                    message='**SERVER** "%s" is already taken.' %newnickname
+                    message = '**SERVER** "%s" is already taken.' %newnickname
                     print message
                     self.wfile.write(message+'\n')
                     continue
                 else:
                     print oldnickname, 'changed nickname to',
                     connections.pop(self.nickname)
-                    self.nickname=newnickname
-                    connections[self.nickname]=self
+                    self.nickname = newnickname
+                    connections[self.nickname] = self
                     print self.nickname
                     self.wfile.write('**SERVER** Nickname successfully changed to "%s"\n' %self.nickname)
 
@@ -96,7 +96,7 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
                     self.sendall(message)
                     continue
             elif line in ('/r', '/room'):
-                room=self.Room()
+                room = self.Room()
                 print 'Sending room to %s:\n\t%s' %(self.nickname, room)
                 self.wfile.write('**SERVER** '+room+'\n')
                 continue
@@ -111,7 +111,7 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
             connections[nickname].wfile.write(message)
 
     def Room(self):
-        room='Room: '
+        room = 'Room: '
         for nickname in connections:
             room += nickname+', '
         return room
