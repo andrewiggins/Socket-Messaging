@@ -77,7 +77,7 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
                 self.sendall('**SERVER** '+message)
                 break
             elif line[:2] == '/n' or line[:5] == '/nick':
-                newnickname = line[2:].strip()
+                newnickname = line.split(' ', 1)[1].strip()
                 oldnickname = self.nickname
                 if connections.has_key(newnickname):
                     message = '**SERVER** "%s" is already taken.' %newnickname
@@ -118,7 +118,7 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
 
 if __name__ == '__main__':
     # Port 0 means to select an arbitrary unused port
-    host, port = raw_input('IP Address:'), input('Port:')
+    host, port = raw_input('IP Address: '), input('Port: ')
     if not host:
         host = util.getIP()
 

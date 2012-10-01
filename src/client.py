@@ -46,7 +46,7 @@ class ClientSocket():
         if nickname:
             self.changeNick(nickname)
         else:
-            self.changeNick(raw_input('Nickname:'))
+            self.changeNick(raw_input('Nickname: '))
 
         self.prompt_on = False
         self.address = address
@@ -112,10 +112,10 @@ class ClientSocket():
 
 
 def main():
-    serverHost = raw_input('Server Host:')
+    serverHost = raw_input('Server Host: ')
     if not serverHost:
         serverHost = util.getIP()
-    serverPort = input('Server Port:')
+    serverPort = input('Server Port: ')
     address = (serverHost, serverPort)
 
     client = ClientSocket(address)
