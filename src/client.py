@@ -72,7 +72,7 @@ class ClientSocket():
             line = raw_input(self.prompt)
             self.prompt_on = False
             if line[:2] == '/n' or line[:5] == '/nick':
-                self.changeNick(line[2:].strip())
+                self.changeNick(line.split(' ', 1)[1].strip())
             self.wfile.write(line + '\n')
 
         self.close()
@@ -115,6 +115,9 @@ def main():
     serverHost = raw_input('Server Host: ')
     if not serverHost:
         serverHost = util.getIP()
+    else:
+        serverHost = socket.gethostbyname(serverHost)
+
     serverPort = input('Server Port: ')
     address = (serverHost, serverPort)
 

@@ -26,6 +26,7 @@
 #import thread
 #import subprocess
 import util
+import socket
 import SocketServer
 
 
@@ -121,6 +122,8 @@ if __name__ == '__main__':
     host, port = raw_input('IP Address: '), input('Port: ')
     if not host:
         host = util.getIP()
+    else:
+        host = socket.gethostbyname(host)
 
     server = SocketServer.ThreadingTCPServer((host, port), ThreadedTCPRequestHandler)
 
