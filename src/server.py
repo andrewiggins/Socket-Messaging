@@ -119,7 +119,7 @@ class ThreadedTCPRequestHandler(SocketServer.StreamRequestHandler):
 
 if __name__ == '__main__':
     # Port 0 means to select an arbitrary unused port
-    host, port = raw_input('IP Address: '), input('Port: ')
+    host, port = raw_input('IP Address (or hostname): '), input('Port: ')
     if not host:
         host = util.getIP()
     else:
