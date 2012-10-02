@@ -120,6 +120,7 @@ class CmdInterface():
 
         s = ''.join(self.charbuffer)
         self.charbuffer = []
+        self.curpos = 0
         return s
 
     def handle_key_press(self, key, pos):
@@ -148,8 +149,8 @@ class CmdInterface():
         G = Home
         O = End
 
-        I = Page Up
-        Q = Page Down
+        I = Page Up #TODO
+        Q = Page Down #TODO
 
         S = Delete
         R = Insert #TODO
@@ -184,8 +185,8 @@ class CmdInterface():
 
 def threaded_output(screen):
     while 1:
-        time.sleep(4)
         screen.write('other: ' + str(time.time()))
+        time.sleep(4)
 
 
 def main():
