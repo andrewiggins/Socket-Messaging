@@ -46,7 +46,7 @@ class ClientSocket():
         if nickname:
             self.changeNick(nickname)
         else:
-            self.changeNick(raw_input('What\'s Nickname You want to be shown: '))
+            self.changeNick(raw_input('What nickname do you want to be shown: '))
 
         self.prompt_on = False
         self.address = address
